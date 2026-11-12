@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chúc Mừng Đặc Biệt! ✨ (Siêu Mượt 60FPS)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;700;900&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* ZERO-LAG HARDWARE ACCELERATED CSS ONLY (transform & opacity) */
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background: linear-gradient(145deg, #12092b 0%, #1f1147 55%, #0e0621 100%);
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+            user-select: none;
+        }
+
+        /* Crisp Cartoon 3D Typography - Zero filter/drop-shadow lag */
+        .cartoon-title {
+            font-family: 'Montserrat', sans-serif;
+            color: #FFE600;
+            text-shadow: 
+                0 3px 0 #d97706,
+                0 6px 0 #92400e,
+                0 9px 15px rgba(0, 0, 0, 0.65);
+            will-change: transform;
+            animation: bouncyTitle 2.2s ease-in-out infinite;
+        }
+
+        @keyframes bouncyTitle {
+            0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+            50% { transform: translate3d(0, -6px, 0) scale(1.03); }
+        }
+
+        @keyframes floatLeftBalloon {
+            0%, 100% { transform: translate3d(0, 0, 0) rotate(-4deg); }
+            50% { transform: translate3d(0, -16px, 0) rotate(4deg); }
+        }
+
+        @keyframes floatRightBalloon {
+            0%, 100% { transform: translate3d(0, 0, 0) rotate(4deg); }
+            50% { transform: translate3d(0, -14px, 0) rotate(-4deg); }
+        }
+
+        @keyframes popInCartoon {
+            0% { opacity: 0; transform: translate3d(0, 35px, 0) scale(0.75); }
+            70% { opacity: 1; transform: translate3d(0, -5px, 0) scale(1.03); }
+            100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+        }
+
+        @keyframes starPulse {
+            0%, 100% { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
+            50% { transform: translate3d(0, -4px, 0) scale(1.18) rotate(12deg); }
+        }
+
+        .anim-balloon-l {
+            will-change: transform;
+            animation: floatLeftBalloon 3.2s ease-in-out infinite;
+        }
+        .anim-balloon-r {
+            will-change: transform;
+            animation: floatRightBalloon 3.6s ease-in-out infinite;
+        }
+        .anim-pop-in {
+            will-change: transform, opacity;
+            animation: popInCartoon 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        .anim-star {
+            will-change: transform;
+            animation: starPulse 2.4s ease-in-out infinite;
+        }
+
+        /* Solid Cartoon Surfaces - NO backdrop-filter blur to prevent GPU lag */
+        .cartoon-card {
+            background: #23134f;
+            border: 4px solid #fbbf24;
+            box-shadow: 0 12px 0 #11072b, 0 16px 30px rgba(0, 0, 0, 0.6);
+        }
+
+        .cartoon-video-frame {
+            background: #1a0d3d;
+            border: 4px solid #38bdf8;
+            box-shadow: 0 10px 0 #0d0521, 0 15px 35px rgba(0, 0, 0, 0.7);
+        }
+
+        .cartoon-pill-bar {
+            background: #1b0e3f;
+            border: 2px solid #4c2f91;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.65);
+        }
+
+        .cartoon-btn {
+            transition: transform 0.15s ease;
+            will-change: transform;
+        }
+        .cartoon-btn:hover {
+            transform: translate3d(0, -2px, 0) scale(1.03);
+        }
+        .cartoon-btn:active {
+            transform: translate3d(0, 2px, 0) scale(0.97);
+        }
+
+        /* Stage switching using only opacity and transform */
+        .stage-hidden {
+            opacity: 0;
+            pointer-events: none;
+            position: absolute;
+            transform: translate3d(0, 15px, 0) scale(0.95);
+            transition: opacity 0.35s ease, transform 0.35s ease;
+        }
+
+        .stage-active {
+            opacity: 1;
+            pointer-events: auto;
+            position: relative;
+            transform: translate3d(0, 0, 0) scale(1);
+            transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+    </style>
+</head>
+<body class="relative flex flex-col items-center justify-between min-h-screen p-3 sm:p-6">
+
+    <!-- LIGHTWEIGHT ZERO-BLUR FIREWORKS CANVAS -->
+    <canvas id="fireworksCanvas" class="fixed inset-0 w-full h-full pointer-events-none z-10"></canvas>
+
+    <!-- TOP STATUS & FPS PERFORMANCE BAR -->
+    <header class="relative z-30 w-full max-w-4xl flex flex-wrap items-center justify-between gap-2 px-3 py-2 rounded-2xl cartoon-pill-bar text-xs sm:text-sm">
+        <div class="flex items-center gap-2 font-bold text-amber-300">
+            <span id="statusDot" class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+            <span id="statusText">🎆 Đang bắn pháo hoa khai màn (3s)...</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <button 
+                id="toggleBgFireworksBtn"
+                onclick="toggleExtraFireworks()"
+                class="hidden px-2.5 py-1 rounded-lg bg-purple-800 hover:bg-purple-700 text-amber-200 font-semibold text-xs border border-purple-500 transition">
+                🎆 Bắn thêm pháo hoa
+            </button>
+            <span id="fpsBadge" class="px-2.5 py-1 rounded-lg bg-emerald-950 text-emerald-300 border border-emerald-600/60 font-bold text-xs">
+                ⚡ Siêu mượt 60FPS
+            </span>
+        </div>
+    </header>
+
+    <!-- MAIN STAGE CONTAINER -->
+    <main class="relative z-20 w-full max-w-4xl flex-1 flex flex-col items-center justify-center my-4">
+
+        <!-- =======================================================
+             STAGE 1: 0s -> 3s CARTOON CELEBRATION GREETING
+             ======================================================= -->
+        <section id="introStage" class="stage-active w-full flex flex-col items-center justify-center text-center px-2">
+            <div class="relative w-full max-w-2xl cartoon-card rounded-3xl p-6 sm:p-10 anim-pop-in">
+                
+                <!-- Cute SVG Left Cartoon Balloon -->
+                <div class="hidden sm:block absolute -left-12 -top-10 w-24 h-32 anim-balloon-l pointer-events-none">
+                    <svg viewBox="0 0 100 140" fill="none">
+                        <path d="M50 100 L45 135" stroke="#FBBF24" stroke-width="3" stroke-linecap="round"/>
+                        <ellipse cx="50" cy="50" rx="38" ry="46" fill="#FF2A85" stroke="#fff" stroke-width="3"/>
+                        <ellipse cx="36" cy="34" rx="8" ry="15" transform="rotate(-20 36 34)" fill="#ffffff" fill-opacity="0.5"/>
+                        <polygon points="44,96 56,96 59,103 41,103" fill="#FF2A85"/>
+                    </svg>
+                </div>
+
+                <!-- Cute SVG Right Cartoon Balloon -->
+                <div class="hidden sm:block absolute -right-12 -top-10 w-24 h-32 anim-balloon-r pointer-events-none">
+                    <svg viewBox="0 0 100 140" fill="none">
+                        <path d="M50 100 L55 135" stroke="#FBBF24" stroke-width="3" stroke-linecap="round"/>
+                        <ellipse cx="50" cy="50" rx="38" ry="46" fill="#00E5FF" stroke="#fff" stroke-width="3"/>
+                        <ellipse cx="36" cy="34" rx="8" ry="15" transform="rotate(-20 36 34)" fill="#ffffff" fill-opacity="0.5"/>
+                        <polygon points="44,96 56,96 59,103 41,103" fill="#00E5FF"/>
+                    </svg>
+                </div>
+
+                <!-- Cute Cartoon Gift Box / Trophy Header -->
+                <div class="flex items-center justify-center gap-3 mb-3">
+                    <span class="text-3xl sm:text-4xl anim-star">🎉</span>
+                    <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-amber-400 border-4 border-white flex items-center justify-center shadow-md">
+                        <!-- Cartoon Trophy SVG -->
+                        <svg class="w-10 h-10 sm:w-12 sm:h-12 text-amber-950" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94A5.01 5.01 0 0011 15.9V19H7v2h10v-2h-4v-3.1a5.01 5.01 0 003.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z"/>
+                        </svg>
+                    </div>
+                    <span class="text-3xl sm:text-4xl anim-star" style="animation-delay: 0.3s;">🎊</span>
+                </div>
+
+                <!-- 3D Cartoon Main Title -->
+                <h1 id="introTitle" class="cartoon-title text-3xl sm:text-5xl md:text-6xl font-black uppercase tracking-wide mb-3">
+                    🎉 CHÚC MỪNG! 🎉
+                </h1>
+
+                <!-- Lively Subtitle -->
+                <p id="introSubtitle" class="text-base sm:text-xl text-amber-100 font-bold max-w-lg mx-auto mb-6 leading-relaxed">
+                    Khoảnh khắc tuyệt vời dành riêng cho bạn! 🌟🥳
+                </p>
+
+                <!-- Sleek 3-Second Countdown Progress Bar -->
+                <div class="w-full max-w-md mx-auto bg-[#140a30] rounded-2xl p-3.5 border-2 border-purple-500/50">
+                    <div class="flex items-center justify-between text-xs sm:text-sm font-bold text-amber-300 mb-2">
+                        <span>🎬 Tự động mở Video sau...</span>
+                        <span id="timerLabel" class="px-2.5 py-0.5 rounded-lg bg-amber-400 text-slate-950 font-black">3.0s</span>
+                    </div>
+                    <div class="w-full h-3.5 bg-purple-950 rounded-full overflow-hidden p-0.5">
+                        <div id="timerBar" class="h-full bg-gradient-to-r from-amber-400 via-pink-500 to-cyan-400 rounded-full" style="width: 0%;"></div>
+                    </div>
+                </div>
+
+                <!-- Skip immediately button if user doesn't want to wait 3s -->
+                <button 
+                    onclick="switchToVideoNow()"
+                    class="mt-4 text-xs font-bold text-cyan-300 hover:text-cyan-200 underline">
+                    Mở Video ngay lập tức &rarr;
+                </button>
+            </div>
+        </section>
+
+        <!-- =======================================================
+             STAGE 2: AFTER 3s SMOOTH VIDEO PLAYER STAGE
+             ======================================================= -->
+        <section id="videoStage" class="stage-hidden w-full flex flex-col items-center justify-center px-1 sm:px-4">
+            
+            <!-- Compact Cartoon Banner Above Video -->
+            <div class="text-center mb-3">
+                <h2 id="stage2Title" class="cartoon-title text-2xl sm:text-4xl font-black uppercase tracking-wide">
+                    🎉 CHÚC MỪNG! 🎉
+                </h2>
+                <p id="stage2Subtitle" class="text-xs sm:text-base text-amber-200 font-bold mt-1">
+                    Khoảnh khắc tuyệt vời dành riêng cho bạn! 🌟🥳
+                </p>
+            </div>
+
+            <!-- Bouncy Cartoon Video Frame -->
+            <div class="relative w-full max-w-3xl rounded-3xl p-2 sm:p-3 cartoon-video-frame">
+                
+                <!-- Corner Cartoon Badges -->
+                <span class="absolute -top-3.5 -left-3 text-2xl sm:text-3xl anim-star pointer-events-none">🌟</span>
+                <span class="absolute -top-3.5 -right-3 text-2xl sm:text-3xl anim-star pointer-events-none">🎈</span>
+
+                <!-- 16:9 Video Container -->
+                <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-black">
+                    
+                    <!-- Fast-loading High-Compatibility HTML5 Video -->
+                    <video 
+                        id="mainVideo" 
+                        class="w-full h-full object-contain bg-black"
+                        playsinline 
+                        loop
+                        muted
+                        controls
+                        preload="metadata">
+                        <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" type="video/mp4">
+                    </video>
+
+                    <!-- Lightweight Fallback Animated Celebration Reel (Only active if offline/blocked) -->
+                    <div id="videoFallbackBox" class="hidden absolute inset-0 bg-gradient-to-br from-indigo-950 via-purple-900 to-pink-900 flex flex-col items-center justify-center p-6 text-center">
+                        <div class="text-5xl mb-3 anim-star">🎬✨🎉</div>
+                        <p class="text-lg sm:text-2xl font-black text-amber-300 mb-2">SẴN SÀNG PHÁT VIDEO CỦA BẠN!</p>
+                        <p class="text-xs sm:text-sm text-purple-200 max-w-md mb-4">
+                            Hãy bấm nút <strong>"📁 Chọn Video từ máy"</strong> bên dưới để mở video chúc mừng từ máy tính hoặc điện thoại của bạn siêu mượt!
+                        </p>
+                        <label class="cartoon-btn cursor-pointer px-5 py-2.5 rounded-xl bg-amber-400 text-slate-950 font-black text-sm shadow-md">
+                            📁 Chọn file Video (.mp4, .mov, .webm)
+                            <input type="file" accept="video/*" class="hidden" onchange="loadUserVideoFile(event)">
+                        </label>
+                    </div>
+
+                    <!-- Prominent Unmute Button Overlay -->
+                    <button 
+                        id="unmuteBtn"
+                        onclick="unmuteVideoPlayer()"
+                        class="cartoon-btn absolute top-3 right-3 z-20 flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs sm:text-sm border-2 border-white shadow-lg">
+                        <span>🔊 Bật tiếng Video</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- =======================================================
+         BOTTOM CLEAN PILL CONTROL BAR (ZERO BLUR LAG)
+         ======================================================= -->
+    <footer class="relative z-30 w-full max-w-2xl">
+        <div class="cartoon-pill-bar rounded-2xl p-2.5 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+            
+            <!-- 1. Replay 3-Second Intro & Video -->
+            <button 
+                onclick="startThreeSecondIntro()"
+                class="cartoon-btn flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs sm:text-sm border-2 border-amber-200">
+                <span>🔄 Xem lại (3s)</span>
+            </button>
+
+            <!-- 2. Local Video File Picker (Zero-lag URL.createObjectURL) -->
+            <label class="cartoon-btn cursor-pointer flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-black text-xs sm:text-sm border-2 border-cyan-200">
+                <span>📁 Chọn Video từ máy</span>
+                <input type="file" accept="video/*" class="hidden" onchange="loadUserVideoFile(event)">
+            </label>
+
+            <!-- 3. Edit Greeting Modal Button -->
+            <button 
+                onclick="openEditModal(true)"
+                class="cartoon-btn flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-pink-500 hover:bg-pink-400 text-white font-black text-xs sm:text-sm border-2 border-pink-300">
+                <span>✏️ Đổi lời chúc</span>
+            </button>
+        </div>
+    </footer>
+
+    <!-- =======================================================
+         LIGHTWEIGHT EDIT MODAL (NO BLUR FILTER)
+         ======================================================= -->
+    <div id="editModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 p-4">
+        <div class="cartoon-card w-full max-w-md rounded-3xl p-6 text-left">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-black text-amber-300">✏️ Đổi lời chúc & Link Video</h3>
+                <button onclick="openEditModal(false)" class="text-white/70 hover:text-white text-2xl font-bold leading-none">&times;</button>
+            </div>
+
+            <div class="space-y-3.5">
+                <div>
+                    <label class="block text-xs font-bold text-amber-200 uppercase mb-1">Tiêu đề chính</label>
+                    <input 
+                        id="titleInput" 
+                        type="text" 
+                        value="🎉 CHÚC MỪNG! 🎉" 
+                        class="w-full px-3.5 py-2 rounded-xl bg-[#12092b] border-2 border-purple-500 text-white font-bold text-sm focus:outline-none focus:border-amber-400">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-amber-200 uppercase mb-1">Lời chúc bên dưới</label>
+                    <textarea 
+                        id="subtitleInput" 
+                        rows="2" 
+                        class="w-full px-3.5 py-2 rounded-xl bg-[#12092b] border-2 border-purple-500 text-white font-medium text-sm focus:outline-none focus:border-amber-400">Khoảnh khắc tuyệt vời dành riêng cho bạn! 🌟🥳</textarea>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-amber-200 uppercase mb-1">Hoặc dán Link Video (.mp4)</label>
+                    <input 
+                        id="videoUrlInput" 
+                        type="url" 
+                        placeholder="https://example.com/video.mp4" 
+                        class="w-full px-3.5 py-2 rounded-xl bg-[#12092b] border-2 border-purple-500 text-white text-sm focus:outline-none focus:border-amber-400">
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-2 mt-5">
+                <button 
+                    onclick="openEditModal(false)" 
+                    class="px-4 py-2 rounded-xl bg-purple-900 hover:bg-purple-800 text-white text-xs sm:text-sm font-bold">
+                    Hủy
+                </button>
+                <button 
+                    onclick="saveCustomGreeting()" 
+                    class="cartoon-btn px-5 py-2 rounded-xl bg-amber-400 text-slate-950 text-xs sm:text-sm font-black">
+                    Lưu & Chạy lại (3s)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =======================================================
+         ULTRA-FAST ZERO-LAG JAVASCRIPT ENGINE
+         ======================================================= -->
+    <script>
+        /* -------------------------------------------------------
+         * 1. ZERO-LAG FIREWORKS ENGINE (NO SHADOWBLUR, CAPPED PARTICLES)
+         * ------------------------------------------------------- */
+        const canvas = document.getElementById('fireworksCanvas');
+        const ctx = canvas.getContext('2d', { alpha: true });
+
+        let cw = 0;
+        let ch = 0;
+        let rafId = null;
+        let isCanvasRunning = false;
+
+        // Strict particle cap (max 100 particles total for guaranteed 60FPS on any device)
+        const MAX_PARTICLES = 100;
+        const rockets = [];
+        const particles = [];
+
+        const COLORS = [
+            '#FFE600', // Cartoon Yellow
+            '#FF2A85', // Hot Pink
+            '#00E5FF', // Cyan
+            '#76FF03', // Lime Green
+            '#FF9100', // Orange
+            '#FFFFFF'  // Crisp White
+        ];
+
+        function resizeCanvas() {
+            // Cap DPR to 1.25 max so high-DPI screens don't push millions of pixels
+            const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
+            cw = window.innerWidth;
+            ch = window.innerHeight;
+            canvas.width = Math.floor(cw * dpr);
+            canvas.height = Math.floor(ch * dpr);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+
+        window.addEventListener('resize', resizeCanvas, { passive: true });
+        resizeCanvas();
+
+        function spawnRocket() {
+            if (rockets.length >= 4) return;
+            const startX = cw * (0.2 + Math.random() * 0.6);
+            const targetY = ch * (0.15 + Math.random() * 0.35);
+            rockets.push({
+                x: startX,
+                y: ch,
+                vx: (Math.random() - 0.5) * 3,
+                vy: -(11 + Math.random() * 4),
+                targetY: targetY,
+                color: COLORS[(Math.random() * COLORS.length) | 0]
+            });
+        }
+
+        function explodeAt(x, y, mainColor) {
+            // Keep total particle count strictly below MAX_PARTICLES
+            const availableSlots = MAX_PARTICLES - particles.length;
+            const count = Math.min(24, availableSlots);
+            if (count <= 0) return;
+
+            const altColor = COLORS[(Math.random() * COLORS.length) | 0];
+            for (let i = 0; i < count; i++) {
+                const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.2;
+                const speed = 2.5 + Math.random() * 5.5;
+                particles.push({
+                    x: x,
+                    y: y,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    color: i % 2 === 0 ? mainColor : altColor,
+                    alpha: 1,
+                    decay: 0.024 + Math.random() * 0.015,
+                    radius: 2.5 + Math.random() * 2
+                });
+            }
+        }
+
+        let lastSpawnTime = 0;
+        let autoSpawnActive = true;
+
+        function renderFireworksLoop(now) {
+            if (!isCanvasRunning) return;
+
+            // Fast clearRect (no composite operations or blur trails that bog down integrated GPUs)
+            ctx.clearRect(0, 0, cw, ch);
+
+            // Spawn fireworks automatically during the 3-second intro
+            if (autoSpawnActive && now - lastSpawnTime > 320) {
+                spawnRocket();
+                lastSpawnTime = now;
+            }
+
+            // Update & draw rockets
+            for (let i = rockets.length - 1; i >= 0; i--) {
+                const r = rockets[i];
+                r.x += r.vx;
+                r.y += r.vy;
+                r.vy += 0.18;
+
+                // Draw crisp rocket dot
+                ctx.fillStyle = r.color;
+                ctx.beginPath();
+                ctx.arc(r.x, r.y, 3.5, 0, Math.PI * 2);
+                ctx.fill();
+
+                if (r.y <= r.targetY || r.vy >= -1) {
+                    explodeAt(r.x, r.y, r.color);
+                    rockets.splice(i, 1);
+                }
+            }
+
+            // Update & draw explosion particles (Zero shadowBlur!)
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vx *= 0.96;
+                p.vy = p.vy * 0.96 + 0.12;
+                p.alpha -= p.decay;
+
+                if (p.alpha <= 0.02) {
+                    particles.splice(i, 1);
+                    continue;
+                }
+
+                ctx.globalAlpha = p.alpha;
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            ctx.globalAlpha = 1;
+
+            // If autoSpawn is off and all particles finished fading, STOP RAF completely!
+            if (!autoSpawnActive && rockets.length === 0 && particles.length === 0) {
+                stopFireworksCanvas();
+                return;
+            }
+
+            rafId = requestAnimationFrame(renderFireworksLoop);
+        }
+
+        function startFireworksCanvas() {
+            autoSpawnActive = true;
+            if (!isCanvasRunning) {
+                isCanvasRunning = true;
+                rafId = requestAnimationFrame(renderFireworksLoop);
+            }
+        }
+
+        function stopFireworksCanvas() {
+            autoSpawnActive = false;
+            isCanvasRunning = false;
+            if (rafId) {
+                cancelAnimationFrame(rafId);
+                rafId = null;
+            }
+            rockets.length = 0;
+            particles.length = 0;
+            ctx.clearRect(0, 0, cw, ch);
+        }
+
+        // Optional lightweight burst if user clicks "Bắn thêm pháo hoa" during video
+        function toggleExtraFireworks() {
+            explodeAt(cw * 0.2, ch * 0.25, '#FFE600');
+            explodeAt(cw * 0.8, ch * 0.25, '#FF2A85');
+            explodeAt(cw * 0.5, ch * 0.18, '#00E5FF');
+            autoSpawnActive = false; // Only render this burst, then auto-sleep canvas
+            if (!isCanvasRunning) {
+                isCanvasRunning = true;
+                rafId = requestAnimationFrame(renderFireworksLoop);
+            }
+        }
+
+        /* -------------------------------------------------------
+         * 2. 3-SECOND INTRO -> VIDEO TRANSITION CONTROLLER
+         * ------------------------------------------------------- */
+        const introStage = document.getElementById('introStage');
+        const videoStage = document.getElementById('videoStage');
+        const timerBar = document.getElementById('timerBar');
+        const timerLabel = document.getElementById('timerLabel');
+        const statusText = document.getElementById('statusText');
+        const toggleBgFireworksBtn = document.getElementById('toggleBgFireworksBtn');
+        const mainVideo = document.getElementById('mainVideo');
+        const unmuteBtn = document.getElementById('unmuteBtn');
+        const videoFallbackBox = document.getElementById('videoFallbackBox');
+
+        let introTimeoutId = null;
+        let timerIntervalId = null;
+
+        function startThreeSecondIntro() {
+            if (introTimeoutId) clearTimeout(introTimeoutId);
+            if (timerIntervalId) clearInterval(timerIntervalId);
+
+            // Reset video
+            mainVideo.pause();
+            mainVideo.currentTime = 0;
+
+            // Show Stage 1 (Greeting), Hide Stage 2 (Video)
+            videoStage.classList.remove('stage-active');
+            videoStage.classList.add('stage-hidden');
+
+            introStage.classList.remove('stage-hidden');
+            introStage.classList.add('stage-active');
+
+            toggleBgFireworksBtn.classList.add('hidden');
+            statusText.textContent = "🎆 Đang bắn pháo hoa khai màn (3s)...";
+
+            // Start lightweight fireworks & pop 3 instant bursts on frame 1
+            rockets.length = 0;
+            particles.length = 0;
+            startFireworksCanvas();
+            explodeAt(cw * 0.25, ch * 0.3, '#FFE600');
+            explodeAt(cw * 0.75, ch * 0.3, '#FF2A85');
+            explodeAt(cw * 0.5, ch * 0.22, '#00E5FF');
+
+            // 3.0s progress bar update (every 50ms = 20 updates/sec, super light)
+            const DURATION = 3000;
+            const startTime = performance.now();
+
+            timerBar.style.width = '0%';
+            timerLabel.textContent = '3.0s';
+
+            timerIntervalId = setInterval(() => {
+                const elapsed = performance.now() - startTime;
+                const remaining = Math.max(0, (DURATION - elapsed) / 1000);
+                const pct = Math.min(100, (elapsed / DURATION) * 100);
+
+                timerBar.style.width = pct + '%';
+                timerLabel.textContent = remaining.toFixed(1) + 's';
+
+                if (elapsed >= DURATION) {
+                    clearInterval(timerIntervalId);
+                }
+            }, 50);
+
+            introTimeoutId = setTimeout(() => {
+                switchToVideoNow();
+            }, DURATION);
+        }
+
+        function switchToVideoNow() {
+            if (introTimeoutId) clearTimeout(introTimeoutId);
+            if (timerIntervalId) clearInterval(timerIntervalId);
+
+            // COMPLETELY STOP fireworks canvas so video gets 100% CPU/GPU
+            stopFireworksCanvas();
+
+            // Swap stages smoothly
+            introStage.classList.remove('stage-active');
+            introStage.classList.add('stage-hidden');
+
+            videoStage.classList.remove('stage-hidden');
+            videoStage.classList.add('stage-active');
+
+            toggleBgFireworksBtn.classList.remove('hidden');
+            statusText.textContent = "🎬 Đang phát Video (Đã tắt nền pháo hoa để tối ưu 100% tốc độ)";
+
+            // Play video smoothly
+            mainVideo.muted = true;
+            const playPromise = mainVideo.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(() => {
+                    videoFallbackBox.classList.remove('hidden');
+                });
+            }
+        }
+
+        function unmuteVideoPlayer() {
+            mainVideo.muted = false;
+            mainVideo.volume = 1.0;
+            mainVideo.play();
+            unmuteBtn.classList.add('hidden');
+        }
+
+        mainVideo.addEventListener('error', () => {
+            videoFallbackBox.classList.remove('hidden');
+        });
+
+        /* -------------------------------------------------------
+         * 3. USER CUSTOMIZATION & LOCAL FILE UPLOAD (ZERO LAG)
+         * ------------------------------------------------------- */
+        let currentObjectUrl = null;
+
+        function loadUserVideoFile(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+
+            if (currentObjectUrl) {
+                URL.revokeObjectURL(currentObjectUrl);
+            }
+            currentObjectUrl = URL.createObjectURL(file);
+            mainVideo.src = currentObjectUrl;
+            mainVideo.load();
+            videoFallbackBox.classList.add('hidden');
+            unmuteBtn.classList.remove('hidden');
+
+            // Run the 3-second celebration intro leading into the user's video
+            startThreeSecondIntro();
+        }
+
+        function openEditModal(show) {
+            const modal = document.getElementById('editModal');
+            if (show) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            } else {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function saveCustomGreeting() {
+            const titleVal = document.getElementById('titleInput').value.trim() || "🎉 CHÚC MỪNG! 🎉";
+            const subVal = document.getElementById('subtitleInput').value.trim() || "Khoảnh khắc tuyệt vời dành riêng cho bạn!";
+            const urlVal = document.getElementById('videoUrlInput').value.trim();
+
+            document.getElementById('introTitle').textContent = titleVal;
+            document.getElementById('stage2Title').textContent = titleVal;
+
+            document.getElementById('introSubtitle').textContent = subVal;
+            document.getElementById('stage2Subtitle').textContent = subVal;
+
+            if (urlVal) {
+                mainVideo.src = urlVal;
+                mainVideo.load();
+                videoFallbackBox.classList.add('hidden');
+            }
+
+            openEditModal(false);
+            startThreeSecondIntro();
+        }
+
+        // Start immediately on load
+        window.addEventListener('DOMContentLoaded', () => {
+            startThreeSecondIntro();
+        });
+    </script>
+</body>
+</html>
